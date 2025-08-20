@@ -17,7 +17,16 @@
     "lint": "run-s lint:*"
   },
   "dependencies": {
-    "vue": "^3.5.18"
+    "@ant-design/icons-vue": "^7.0.1",
+    "@antv/x6": "^2.18.1",
+    "ant-design-vue": "^4.2.6",
+    "axios": "^1.11.0",
+    "echarts": "^6.0.0",
+    "mitt": "^3.0.1",
+    "pinia": "^3.0.3",
+    "qiankun": "^2.10.16",
+    "vue": "^3.5.18",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.2",

@@ -1,0 +1,6 @@
+// 添加类型声明以解决导入问题
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue'
+  const component: DefineComponent<{}, {}, any>
+  export default component
+}
