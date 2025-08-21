@@ -1,6 +1,6 @@
 # 开发计划 — PC 管理端主应用（Vue3 + Vite + TS + qiankun）
 
-版本：1.0  
+版本：1.1  
 读者：Owner、前端、测试、DevOps  
 范围：主应用壳（认证/权限/路由/布局/通信/微前端注册/部署），子应用接入规范参见 docs/solution.md
 
@@ -73,10 +73,12 @@
   - 基础布局（Sider/Menu/Header/Content），暗黑/浅色切换
   - 输出：可跑模板与组件库就绪
 
-- 第2周：qiankun 接入与通信
+- 第2周：qiankun 接入与通信 + 部署
   - 主应用 qiankun 注册、容器页、prefetch/沙箱/单例
   - Pinia 全局状态通过 props 暴露给子应用（get/set/subscribe）
-  - 输出：加载至少一个空子应用，状态通信有效
+  - Vercel 部署配置、环境变量、预览环境
+  - vercel.json 配置（history 路由重写）
+  - 输出：加载至少一个空子应用，状态通信有效，线上可访问
 
 - 第3周：认证与权限骨架
   - 登录/注册页、authStore 设计、axios 拦截器
@@ -88,10 +90,11 @@
   - Diagram 画布页（节点/边/交互/导出JSON）
   - 输出：两页功能 Demo
 
-- 第5周：部署与优化
-  - Vercel 部署、环境变量、预览环境
-  - 资源 externals（Vue/antdv/echarts/x6 按需评估）、按路由懒加载
-  - 输出：线上可访问地址与首屏/切换性能达标
+- 第5周：性能优化
+  - 资源 externals（Vue/antdv/echarts/x6 按需评估）
+  - 按路由懒加载、组件按需引入
+  - 首屏加载优化、CDN 配置
+  - 输出：首屏/切换性能达标
 
 - 第6周：测试与文档
   - 单元/简易 E2E、错误链路覆盖

@@ -47,7 +47,7 @@ const menuItems = [
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-header style="background: #fff; padding: 0">
+      <a-layout-header class="micro-header">
         <a-row justify="space-between" align="middle">
           <a-col :span="12">
             <a-button
@@ -88,8 +88,8 @@ const menuItems = [
           </a-col>
         </a-row>
       </a-layout-header>
-      <a-layout-content style="margin: 16px">
-        <div style="padding: 24px; background: #fff; min-height: 360px">
+      <a-layout-content>
+        <div style="background: #fff; min-height: 360px">
           <router-view></router-view>
         </div>
       </a-layout-content>
@@ -114,5 +114,10 @@ const menuItems = [
   margin: 0 0 0 12px;
   font-size: 18px;
   white-space: nowrap;
+}
+.micro-header {
+  background-color: #fff;
+  padding: 0;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 }
 </style>
