@@ -3,7 +3,10 @@
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "github": {
-    "silent": false
+    "silent": true,
+    "autoAlias": true,
+    "enabled": true,
+    "branches": ["main"]
   },
   "headers": [
     {
