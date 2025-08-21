@@ -1,6 +1,6 @@
 # 开发任务清单 — 主应用（Vue3 + Vite + TS + qiankun）
 
-版本：1.0  
+版本：1.1  
 说明：按周推进，每项包含任务、命令与脚手架代码片段。依赖使用 PNPM（可替换为 npm/yarn）。
 
 ---
@@ -85,16 +85,22 @@ app.mount('#app')
 
 ---
 
-## Week 2 qiankun 接入与通信
+## Week 2 qiankun 接入与通信 + 部署
 
 任务
 - 新建 qiankun 封装：注册、start、initGlobalState
 - 在 App.vue 预留子应用容器 #subapp-container
 - 通过 props 下发 Pinia 全局 actions（或 qiankun actions）
+- Vercel 部署配置、环境变量、预览环境
+- GitHub Actions 自动部署工作流配置
+- vercel.json 配置（history 路由重写）
 
 命令
 ```bash
 # 无额外依赖，已在 Week1 安装 qiankun
+
+# 创建 GitHub Actions 工作流目录
+mkdir -p .github/workflows
 ```
 
 脚手架代码
@@ -129,6 +135,80 @@ setupQiankun(apps)
 <template>
   <div id="subapp-container" style="height:100%"></div>
 </template>
+```
+
+```json
+// vercel.json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }],
+  "github": {
+    "silent": false
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "X-Requested-With, Content-Type, Accept, Authorization" }
+      ]
+    }
+  ]
+}
+```
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Build
+        run: pnpm build
+        env:
+          VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+      
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: '--prod'
+```
+
+```bash
+# 在 GitHub 仓库设置中添加以下 Secrets
+# VERCEL_TOKEN: 从 Vercel 获取的 API Token
+# VERCEL_ORG_ID: Vercel 组织 ID
+# VERCEL_PROJECT_ID: Vercel 项目 ID
+# VITE_API_BASE: API 基础 URL（可选）
 ```
 
 ---
@@ -189,25 +269,46 @@ export function initGraph(container: HTMLElement){
 
 ---
 
-## Week 5 部署与优化
+## Week 5 性能优化
 
 任务
-- Vercel 部署（主分支自动部署、PR Preview）
-- history 路由重写（vercel.json）
-- 评估 externals（CDN 注入 Vue/antdv/echarts/x6），按需开启
-- 路由与页面懒加载
+- 资源 externals（Vue/antdv/echarts/x6 按需评估）
+- 按路由懒加载、组件按需引入
+- 首屏加载优化、CDN 配置
 
 命令与配置
 ```bash
-# Vercel CLI（可选）
-pnpm add -D vercel
+# 按需引入组件（可选）
+pnpm add -D unplugin-vue-components
 ```
 
-```json
-// vercel.json
-{
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
-}
+```ts
+// vite.config.ts（externals 示例）
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import Components from 'unplugin-vue-components/vite'
+import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    Components({
+      resolvers: [AntDesignVueResolver()],
+    }),
+  ],
+  build: {
+    rollupOptions: {
+      external: ['vue', 'vue-router', 'pinia'],
+      output: {
+        globals: {
+          vue: 'Vue',
+          'vue-router': 'VueRouter',
+          pinia: 'Pinia',
+        },
+      },
+    },
+  },
+})
 ```
 
 ---

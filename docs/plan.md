@@ -1,6 +1,6 @@
 # 开发计划 — PC 管理端主应用（Vue3 + Vite + TS + qiankun）
 
-版本：1.1  
+版本：1.2  
 读者：Owner、前端、测试、DevOps  
 范围：主应用壳（认证/权限/路由/布局/通信/微前端注册/部署），子应用接入规范参见 docs/solution.md
 
@@ -15,7 +15,7 @@
 - 全局通信：Pinia 作为全局状态源，向子应用暴露 get/set 接口（经 qiankun props）
 - UI/图形：集成 ant-design-vue、@antv/x6、ECharts，提供 Demo 页
 - 网络层：axios 实例（拦截器、错误处理、重试/取消）
-- 部署：Vercel（主分支自动部署，Preview 环境基于 PR）
+- 部署：Vercel + GitHub Actions（主分支自动部署，Preview 环境基于 PR）
 
 非目标
 - 复杂报表引擎与低代码编辑器（留待后续）
@@ -31,6 +31,7 @@
 - 网络：axios ^1
 - 质量：ESLint（@antfu/eslint-config 或 Airbnb）、Prettier、lint-staged、Husky
 - 测试（可选）：Vitest、Playwright/Cypress
+- CI/CD：GitHub Actions、Vercel
 
 ---
 
@@ -45,7 +46,7 @@
 6) feature pages：Dashboard（ECharts）、Diagram（X6）  
 7) http：axios 实例、统一错误、401/403 处理、刷新令牌（如需）  
 8) microfrontends：qiankun 注册与生命周期、全局状态桥接、externals 策略  
-9) devops：Vercel 部署、环境变量、CI（GitHub Actions 可选）
+9) devops：Vercel 部署、环境变量、CI（GitHub Actions）
 
 建议目录（主应用）
 - src/
@@ -63,6 +64,7 @@
   - utils/（request.ts、i18n.ts、storage.ts）
   - qiankun/（index.ts、apps.ts）
   - main.ts、App.vue
+- .github/workflows/（GitHub Actions 配置）
 
 ---
 
@@ -77,8 +79,9 @@
   - 主应用 qiankun 注册、容器页、prefetch/沙箱/单例
   - Pinia 全局状态通过 props 暴露给子应用（get/set/subscribe）
   - Vercel 部署配置、环境变量、预览环境
+  - GitHub Actions 自动部署工作流配置
   - vercel.json 配置（history 路由重写）
-  - 输出：加载至少一个空子应用，状态通信有效，线上可访问
+  - 输出：加载至少一个空子应用，状态通信有效，git push 后自动部署并线上可访问
 
 - 第3周：认证与权限骨架
   - 登录/注册页、authStore 设计、axios 拦截器
@@ -320,6 +323,53 @@ export function setupQiankun() {
 - 主应用通过 CDN 注入 Vue/ant-design-vue/echarts/x6，子应用通过 externals 复用，减少重复加载。
 - 首期可不做，等子应用接入后按体积与冲突评估。
 
+5.8 GitHub Actions 自动部署
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Build
+        run: pnpm build
+        env:
+          VITE_API_BASE: ${{ secrets.VITE_API_BASE }}
+      
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./
+          vercel-args: '--prod'
+```
+
 ---
 
 ## 6. Vercel 部署与环境
@@ -336,6 +386,26 @@ export function setupQiankun() {
   "rewrites": [{ "source": "/(.*)", "destination": "/" }]
 }
 ```
+
+### GitHub Actions 配置
+
+1. 在 GitHub 仓库设置中添加以下 Secrets：
+   - VERCEL_TOKEN：从 Vercel 获取的 API Token
+   - VERCEL_ORG_ID：Vercel 组织 ID
+   - VERCEL_PROJECT_ID：Vercel 项目 ID
+   - VITE_API_BASE：API 基础 URL（可选）
+
+2. 工作流触发条件：
+   - 推送到 main 分支时自动部署到生产环境
+   - 创建或更新 PR 时自动部署到预览环境
+
+3. 部署流程：
+   - 检出代码
+   - 设置 Node.js 环境
+   - 安装 pnpm
+   - 安装依赖
+   - 构建项目
+   - 部署到 Vercel
 
 ---
 
@@ -357,7 +427,8 @@ export function setupQiankun() {
   - 能成功注册并装载子应用，切换无样式/JS 污染（CSS 隔离生效）
   - Pinia 全局状态可通知子应用并回传（actions.setGlobalState）
 - 部署
-  - main 分支推送自动触发 Vercel 部署，Preview 可访问
+  - main 分支推送自动触发 GitHub Actions 部署到 Vercel
+  - PR 自动生成预览环境
 
 ---
 
@@ -368,6 +439,7 @@ export function setupQiankun() {
 - 权限复杂度：权限矩阵不清 → 先产出角色-资源-操作表，路由元信息单一来源
 - X6 样式冲突：与 AntD 重叠 → 保持容器样式命名空间，必要时 Shadow DOM 承载
 - 子应用故障：entry 不可达 → 主应用加兜底 UI 与重试提示
+- CI/CD 失败：Vercel 集成问题 → 添加详细日志，设置失败通知
 
 ---
 
@@ -377,7 +449,7 @@ export function setupQiankun() {
 - 搭建布局与登录页，打通登录→守卫→动态路由的最小闭环
 - 创建 Dashboard 与 Diagram 页的基础 Demo
 - 集成 qiankun 并以一个空子应用完成挂载与通信
-- 配置 Vercel 项目与环境变量，完成首个线上预览
+- 配置 GitHub Actions 与 Vercel 项目，完成自动部署流程
 
 ---
 
@@ -390,3 +462,5 @@ export function setupQiankun() {
 - ECharts 文档：https://echarts.apache.org/
 - X6 文档：https://x6.antv.antgroup.com/
 - qiankun 文档：https://qiankun.umijs.org/
+- GitHub Actions 文档：https://docs.github.com/cn/actions
+- Vercel 文档：https://vercel.com/docs
