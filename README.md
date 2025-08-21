@@ -36,7 +36,7 @@ pnpm preview
 export const microApps: MicroApp[] = [
   {
     name: 'appName',
-    entry: process.env.NODE_ENV === 'development' 
+    entry: import.meta.env.MODE=== 'development' 
       ? 'http://localhost:端口号' 
       : '线上地址',
     container: '#subapp-container',

@@ -1,5 +1,5 @@
-import { registerMicroApps, start, initGlobalState, MicroApp } from 'qiankun'
-import type { SetGlobalState } from 'qiankun'
+import { registerMicroApps, start, initGlobalState } from 'qiankun'
+import type { RegistrableApp } from 'qiankun'
 
 export type QiankunState = {
   user: any | null
@@ -7,7 +7,7 @@ export type QiankunState = {
   [key: string]: any
 }
 
-export const qiankunActions = initGlobalState<QiankunState>({
+export const qiankunActions = initGlobalState({
   user: null,
   token: '',
 })
@@ -17,7 +17,7 @@ qiankunActions.onGlobalStateChange((state, prev) => {
   console.log('[qiankun] onGlobalStateChange', state, prev)
 })
 
-export function setupQiankun(apps: MicroApp[] = []) {
+export function setupQiankun(apps: RegistrableApp<any>[] = []) {
   // apps 可以从配置文件或运行时注入
   registerMicroApps(
     apps,
@@ -45,5 +45,5 @@ export function setupQiankun(apps: MicroApp[] = []) {
 }
 
 export function setGlobalState(state: Partial<QiankunState>) {
-  ;(qiankunActions as unknown as SetGlobalState)(state)
+  qiankunActions.setGlobalState(state)
 }

@@ -1,11 +1,11 @@
-import type { MicroApp } from 'qiankun'
+import type { RegistrableApp } from 'qiankun'
 import { qiankunActions } from './index'
 
 // 子应用配置列表
-export const microApps: MicroApp[] = [
+export const microApps: RegistrableApp<any>[] = [
   {
     name: 'vue2App',
-    entry: process.env.NODE_ENV === 'development' 
+    entry: import.meta.env.MODE === 'development' 
       ? 'http://localhost:7101' // 本地开发环境
       : 'https://vue2-app.vercel.app', // 线上环境
     container: '#subapp-container',
@@ -19,7 +19,7 @@ export const microApps: MicroApp[] = [
   // 可以添加更多子应用
   // {
   //   name: 'reactApp',
-  //   entry: process.env.NODE_ENV === 'development'
+  //   entry: import.meta.env.MODE === 'development'
   //     ? 'http://localhost:7102'
   //     : 'https://react-app.vercel.app',
   //   container: '#subapp-container',
