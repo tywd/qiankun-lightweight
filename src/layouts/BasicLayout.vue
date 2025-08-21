@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '@/store/app'
+import { usePermStore } from '@/store/perm'
+import { useAuthStore } from '@/store/auth'
 // 使用Ant Design Vue 4.x内置图标
 import { MenuUnfoldOutlined, MenuFoldOutlined, BulbOutlined, DownOutlined, ApartmentOutlined, AppstoreOutlined, DashboardOutlined} from '@ant-design/icons-vue'
 
 const appStore = useAppStore()
+const permStore = usePermStore()
+const authStore = useAuthStore()
 const route = useRoute()
 const selectedKeys = ref<string[]>([])
 
@@ -15,11 +19,20 @@ watch(() => route.path, (path) => {
   selectedKeys.value = [`/${key}`]
 }, { immediate: true })
 
-const menuItems = [
-  { key: '/dashboard', title: '仪表盘', icon: 'dashboard' },
-  { key: '/diagram', title: '流程图', icon: 'apartment' },
-  { key: '/micro/vue2-app', title: '子应用', icon: 'appstore' },
-]
+// 从权限store获取菜单列表
+const menuItems = computed(() => {
+  return permStore.getMenuList.map(item => ({
+    key: item.key,
+    title: item.title,
+    icon: item.icon
+  }))
+})
+
+// 退出登录
+const handleLogout = () => {
+  authStore.logout()
+  window.location.href = '/login'
+}
 </script>
 
 <template>
@@ -34,15 +47,20 @@ const menuItems = [
         theme="dark"
         mode="inline"
       >
-        <a-menu-item v-for="item in menuItems" :key="item.key">
-          <template #icon>
-            <DashboardOutlined v-if="item.icon === 'dashboard'" />
-            <ApartmentOutlined v-else-if="item.icon === 'apartment'" />
-            <AppstoreOutlined v-else-if="item.icon === 'appstore'" />
-          </template>
-          <router-link :to="item.key">
-            <span>{{ item.title }}</span>
-          </router-link>
+        <template v-if="menuItems.length > 0">
+          <a-menu-item v-for="item in menuItems" :key="item.key">
+            <template #icon>
+              <DashboardOutlined v-if="item.icon === 'dashboard'" />
+              <ApartmentOutlined v-else-if="item.icon === 'apartment'" />
+              <AppstoreOutlined v-else-if="item.icon === 'appstore'" />
+            </template>
+            <router-link :to="item.key">
+              <span>{{ item.title }}</span>
+            </router-link>
+          </a-menu-item>
+        </template>
+        <a-menu-item v-else key="loading">
+          <span>加载中...</span>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
@@ -64,7 +82,7 @@ const menuItems = [
           <a-col :span="12" style="text-align: right; padding-right: 24px">
             <a-dropdown>
               <a-button type="text">
-                管理员
+                {{ authStore.user?.name || '管理员' }}
                 <DownOutlined />
               </a-button>
               <template #overlay>
@@ -72,7 +90,7 @@ const menuItems = [
                   <a-menu-item key="profile">个人信息</a-menu-item>
                   <a-menu-item key="settings">设置</a-menu-item>
                   <a-menu-divider />
-                  <a-menu-item key="logout">退出登录</a-menu-item>
+                  <a-menu-item key="logout" @click="handleLogout">退出登录</a-menu-item>
                 </a-menu>
               </template>
             </a-dropdown>

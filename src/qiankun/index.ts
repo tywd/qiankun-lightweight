@@ -39,7 +39,10 @@ export function setupQiankun(apps: RegistrableApp<any>[] = []) {
 
   start({
     prefetch: true,
-    sandbox: { strictStyleIsolation: true },
+    sandbox: { 
+      strictStyleIsolation: false, // 修改为 false，避免样式隔离导致的问题
+      experimentalStyleIsolation: true // 使用实验性的样式隔离，更加兼容
+    },
     singular: true,
   })
 }

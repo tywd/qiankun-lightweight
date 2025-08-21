@@ -6,8 +6,8 @@ export const microApps: RegistrableApp<any>[] = [
   {
     name: 'vue2App',
     entry: import.meta.env.MODE === 'development' 
-      ? 'http://localhost:7101' // 本地开发环境
-      : 'https://vue2-app.vercel.app', // 线上环境
+      ? 'http://localhost:5174' // 本地开发环境
+      : 'https://llm-chat-ty.vercel.app', // 线上环境（注意：移除了末尾的斜杠）
     container: '#subapp-container',
     activeRule: '/micro/vue2-app',
     props: {

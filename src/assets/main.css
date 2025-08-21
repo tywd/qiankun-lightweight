@@ -1,6 +1,7 @@
 @import './base.css';
 
 #app {
+  width: 100%;
   max-width: 1980px;
   margin: 0 auto;
   padding: 0;
