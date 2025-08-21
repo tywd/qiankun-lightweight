@@ -3,13 +3,28 @@ import { qiankunActions } from './index'
 
 // 子应用配置列表
 export const microApps: RegistrableApp<any>[] = [
+  // 暂时注释掉 vue2App 子应用，避免连接错误
+  // {
+  //   name: 'vue2App',
+  //   entry: import.meta.env.MODE === 'development' 
+  //     ? 'http://localhost:5174' // 本地开发环境
+  //     : 'https://llm-chat-ty.vercel.app', // 线上环境（注意：移除了末尾的斜杠）
+  //   container: '#subapp-container',
+  //   activeRule: '/micro/vue2-app',
+  //   props: {
+  //     actions: qiankunActions,
+  //     from: 'main-app',
+  //     version: '1.0.0'
+  //   }
+  // },
+  // AI News 子应用
   {
-    name: 'vue2App',
-    entry: import.meta.env.MODE === 'development' 
-      ? 'http://localhost:5174' // 本地开发环境
-      : 'https://llm-chat-ty.vercel.app', // 线上环境（注意：移除了末尾的斜杠）
+    name: 'ai-news',
+    entry: import.meta.env.MODE === 'development'
+      ? 'http://localhost:5175' // 本地开发环境（根据实际端口调整）
+      : 'https://ai-news.vercel.app', // 线上环境（部署后替换为实际地址）
     container: '#subapp-container',
-    activeRule: '/micro/vue2-app',
+    activeRule: '/micro/ai-news',
     props: {
       actions: qiankunActions,
       from: 'main-app',

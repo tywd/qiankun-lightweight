@@ -23,16 +23,24 @@ onMounted(() => {
   // 手动触发一次子应用加载（解决可能的路由问题）
   window.dispatchEvent(new CustomEvent('single-spa:routing-event'))
   
-  // 5秒后如果还在加载中，显示提示
-  const timer = setTimeout(() => {
-    if (loading.value) {
-      errorMessage.value = '子应用加载时间较长，请检查网络或应用状态'
+  // 检查子应用是否已经加载（可能在事件监听器设置前就已经加载完成）
+  setTimeout(() => {
+    // 检查子应用容器是否有内容
+    if (container.childElementCount > 0) {
+      handleMounted()
+    } else {
+      // 5秒后如果还在加载中，显示提示
+      const timer = setTimeout(() => {
+        if (loading.value) {
+          errorMessage.value = '子应用加载时间较长，请检查网络或应用状态'
+        }
+      }, 5000)
+      
+      return () => {
+        clearTimeout(timer)
+      }
     }
-  }, 5000)
-  
-  return () => {
-    clearTimeout(timer)
-  }
+  }, 100)
 })
 
 onBeforeUnmount(() => {

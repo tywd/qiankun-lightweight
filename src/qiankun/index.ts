@@ -44,6 +44,12 @@ export function setupQiankun(apps: RegistrableApp<any>[] = []) {
       experimentalStyleIsolation: true // 使用实验性的样式隔离，更加兼容
     },
     singular: true,
+    excludeAssetFilter: (assetUrl) => {
+      // 排除一些不需要被 qiankun 处理的静态资源
+      const whiteList = ['.html', '.js', '.css', '.json', '.map', '.ico'];
+      const isWhitelisted = whiteList.some(ext => assetUrl.includes(ext));
+      return !isWhitelisted;
+    },
   })
 }
 

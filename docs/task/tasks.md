@@ -237,7 +237,43 @@ export function setupGuards(router: Router){
 
 ---
 
-## Week 4 ECharts 与 X6 集成
+## Week 4 子应用集成（ai-news）
+
+任务
+- 将子应用路由改为 /micro/ai-news，并在 qiankun 中注册 ai-news 子应用
+- 在主应用菜单与路由守卫增加对 /micro/ai-news 的入口与权限控制
+- 验证子应用容器（#subapp-container）渲染时机、props.actions 通信、样式隔离策略（strictStyleIsolation vs experimentalStyleIsolation）
+- 完成主应用对 ai-news 的接入演示（本地 mock 或外网 entry）
+- 输出：ai-news 子应用可在主壳内访问，通信与权限链路验证通过
+
+脚手架代码（主应用侧示例）
+```ts
+// src/qiankun/apps.ts（新增或更新）
+import type { RegisterMicroAppsParams } from 'qiankun'
+export const microApps: RegisterMicroAppsParams = [
+  {
+    name: 'ai-news',
+    entry: 'https://your-ai-news.vercel.app', // 子应用真实地址或本地调试地址
+    container: '#subapp-container',
+    activeRule: '/micro/ai-news',
+    props: { actions: undefined }, // 在 setupQiankun 时注入 actions
+  },
+]
+```
+
+```ts
+// src/router/routes.ts（新增路由条目）
+{ path: '/micro/ai-news', name: 'AiNewsMicro', component: () => import('@/pages/micro/Container.vue'), meta: { auth: true, perms: ['view:micro'] } }
+```
+
+注意事项
+- 子应用需实现 qiankun 生命周期（bootstrap/mount/unmount）
+- 子应用通过 props.actions 使用 initGlobalState 提供的 setGlobalState/onGlobalStateChange
+- 入口 URL 不带多余尾部斜杠，确保资源路径解析正常
+
+---
+
+## Week 5 ECharts 与 X6 集成
 
 任务
 - Dashboard：封装 useEcharts Hook，基础折线/柱状图
@@ -269,7 +305,7 @@ export function initGraph(container: HTMLElement){
 
 ---
 
-## Week 5 性能优化
+## Week 6 性能优化
 
 任务
 - 资源 externals（Vue/antdv/echarts/x6 按需评估）
@@ -313,7 +349,7 @@ export default defineConfig({
 
 ---
 
-## Week 6 测试与文档
+## Week 7 测试与文档
 
 任务
 - 单元测试（Vitest），E2E（Playwright/Cypress）择一
@@ -328,7 +364,7 @@ pnpm add -D playwright @playwright/test
 pnpm add -D cypress
 ```
 
----
+--- 
 
 ## 附：一次性安装命令（汇总）
 

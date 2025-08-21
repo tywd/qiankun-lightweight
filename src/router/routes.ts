@@ -65,6 +65,17 @@ export const dynamicRoutes: RouteRecordRaw[] = [
       perms: ['view:micro'] 
     } 
   },
+  { 
+    path: '/micro/ai-news', 
+    name: 'AiNewsMicro', 
+    component: () => import('@/pages/micro/Container.vue'), 
+    meta: { 
+      auth: true,
+      title: 'AI资讯',
+      icon: 'robot',
+      perms: ['view:micro'] 
+    } 
+  },
 ]
 
 // 所有路由，包括静态和动态路由

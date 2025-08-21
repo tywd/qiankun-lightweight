@@ -25,7 +25,7 @@
 
 ## 2. 技术栈与版本建议
 
-- 运行环境：Node ≥ 18、PNPM/Yarn/NPM 任一
+- 运行环境：Node ≥ 20、PNPM/Yarn/NPM 任一
 - 框架与核心：Vue ^3.4、Vite ^5、TypeScript ^5、vue-router ^4、pinia ^2、qiankun ^2
 - UI/图形：ant-design-vue ^4、@antv/x6 ^1、echarts ^5
 - 网络：axios ^1
@@ -68,7 +68,7 @@
 
 ---
 
-## 4. 里程碑与排期（6 周）
+## 4. 里程碑与排期（7 周）
 
 - 第1周：项目基建与 UI 框架
   - 集成 ant-design-vue、Pinia、vue-router、axios、ESLint/Prettier
@@ -88,23 +88,30 @@
   - 路由守卫与动态路由、菜单按权限渲染
   - 输出：登录后可见不同菜单，未登录拦截
 
-- 第4周：ECharts + X6 集成
+- 第4周：子应用集成（ai-news）
+  - 将子应用路由改为 /micro/ai-news，并在 qiankun 中注册 ai-news 子应用
+  - 更新主应用菜单与路由守卫以支持 /micro/ai-news 的访问控制
+  - 验证子应用容器（#subapp-container）渲染时机、props.actions 通信、样式隔离策略
+  - 输出：ai-news 子应用在主壳内可访问、通信链路与权限验证通过
+
+- 第5周：ECharts + X6 集成
   - Dashboard 图表页（折线/柱状/饼图）
   - Diagram 画布页（节点/边/交互/导出JSON）
   - 输出：两页功能 Demo
 
-- 第5周：性能优化
+- 第6周：性能优化
   - 资源 externals（Vue/antdv/echarts/x6 按需评估）
   - 按路由懒加载、组件按需引入
   - 首屏加载优化、CDN 配置
   - 输出：首屏/切换性能达标
 
-- 第6周：测试与文档
+- 第7周：测试与文档
   - 单元/简易 E2E、错误链路覆盖
   - 完成 README、接入手册与排障文档
   - 输出：稳定可交付版本
 
 人员建议：2 人并行（基础架构/认证路由 + UI图表/微前端）。  
+备注：ai-news 子应用为独立仓库并单独部署（Vercel + GitHub Actions），主应用仅负责接入与运行时通信/权限。
 
 ---
 
