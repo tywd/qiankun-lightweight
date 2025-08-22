@@ -22,7 +22,7 @@ export const microApps: RegistrableApp<any>[] = [
     name: 'ai-news-app',
     entry: import.meta.env.MODE === 'development'
       ? 'http://localhost:5175/' // 本地开发环境（使用当前运行的端口）
-      : 'https://ai-news-app-two.vercel.app/', // 线上环境（添加了末尾的斜杠）
+      : 'https://ai-news-app-two.vercel.app', // 线上环境（移除末尾的斜杠）
     container: '#subapp-container',
     activeRule: '/micro/ai-news-app',
     props: {
