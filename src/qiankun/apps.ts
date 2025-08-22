@@ -30,7 +30,12 @@ export const microApps: RegistrableApp<any>[] = [
       from: 'main-app',
       version: '1.0.0',
       baseRoute: '/micro/ai-news-app', // 传递基础路由给子应用
-      devMode: import.meta.env.MODE === 'development' // 传递开发模式标志
+      devMode: import.meta.env.MODE === 'development', // 传递开发模式标志
+      // 添加额外的配置，用于处理生产环境中的MIME类型问题
+      scriptAttrs: {
+        type: 'application/javascript',
+        crossorigin: 'anonymous'
+      }
     }
   },
   // 可以添加更多子应用
