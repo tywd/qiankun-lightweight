@@ -21,15 +21,16 @@ export const microApps: RegistrableApp<any>[] = [
   {
     name: 'ai-news-app',
     entry: import.meta.env.MODE === 'development'
-      ? 'http://localhost:5175' // 本地开发环境（根据实际端口调整）
-      : 'https://ai-news-app-two.vercel.app', // 线上环境（部署后替换为实际地址）
+      ? 'http://localhost:5175/' // 本地开发环境（使用当前运行的端口）
+      : 'https://ai-news-app-two.vercel.app/', // 线上环境（添加了末尾的斜杠）
     container: '#subapp-container',
     activeRule: '/micro/ai-news-app',
     props: {
       actions: qiankunActions,
       from: 'main-app',
       version: '1.0.0',
-      baseRoute: '/micro/ai-news-app' // 传递基础路由给子应用
+      baseRoute: '/micro/ai-news-app', // 传递基础路由给子应用
+      devMode: import.meta.env.MODE === 'development' // 传递开发模式标志
     }
   },
   // 可以添加更多子应用
