@@ -88,11 +88,11 @@
   - 路由守卫与动态路由、菜单按权限渲染
   - 输出：登录后可见不同菜单，未登录拦截
 
-- 第4周：子应用集成（ai-news）
-  - 将子应用路由改为 /micro/ai-news，并在 qiankun 中注册 ai-news 子应用
-  - 更新主应用菜单与路由守卫以支持 /micro/ai-news 的访问控制
+- 第4周：子应用集成（ai-news-app）
+  - 将子应用路由改为 /micro/ai-news-app，并在 qiankun 中注册 ai-news-app 子应用
+  - 更新主应用菜单与路由守卫以支持 /micro/ai-news-app 的访问控制
   - 验证子应用容器（#subapp-container）渲染时机、props.actions 通信、样式隔离策略
-  - 输出：ai-news 子应用在主壳内可访问、通信链路与权限验证通过
+  - 输出：ai-news-app 子应用在主壳内可访问、通信链路与权限验证通过
 
 - 第5周：ECharts + X6 集成
   - Dashboard 图表页（折线/柱状/饼图）
@@ -111,7 +111,7 @@
   - 输出：稳定可交付版本
 
 人员建议：2 人并行（基础架构/认证路由 + UI图表/微前端）。  
-备注：ai-news 子应用为独立仓库并单独部署（Vercel + GitHub Actions），主应用仅负责接入与运行时通信/权限。
+备注：ai-news-app 子应用为独立仓库并单独部署（Vercel + GitHub Actions），主应用仅负责接入与运行时通信/权限。
 
 ---
 

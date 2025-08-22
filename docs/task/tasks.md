@@ -237,14 +237,14 @@ export function setupGuards(router: Router){
 
 ---
 
-## Week 4 子应用集成（ai-news）
+## Week 4 子应用集成（ai-news-app）
 
 任务
-- 将子应用路由改为 /micro/ai-news，并在 qiankun 中注册 ai-news 子应用
-- 在主应用菜单与路由守卫增加对 /micro/ai-news 的入口与权限控制
+- 将子应用路由改为 /micro/ai-news-app，并在 qiankun 中注册 ai-news-app 子应用
+- 在主应用菜单与路由守卫增加对 /micro/ai-news-app 的入口与权限控制
 - 验证子应用容器（#subapp-container）渲染时机、props.actions 通信、样式隔离策略（strictStyleIsolation vs experimentalStyleIsolation）
-- 完成主应用对 ai-news 的接入演示（本地 mock 或外网 entry）
-- 输出：ai-news 子应用可在主壳内访问，通信与权限链路验证通过
+- 完成主应用对 ai-news-app 的接入演示（本地 mock 或外网 entry）
+- 输出：ai-news-app 子应用可在主壳内访问，通信与权限链路验证通过
 
 脚手架代码（主应用侧示例）
 ```ts
@@ -252,10 +252,10 @@ export function setupGuards(router: Router){
 import type { RegisterMicroAppsParams } from 'qiankun'
 export const microApps: RegisterMicroAppsParams = [
   {
-    name: 'ai-news',
-    entry: 'https://your-ai-news.vercel.app', // 子应用真实地址或本地调试地址
+    name: 'ai-news-app',
+    entry: 'https://your-ai-news-app.vercel.app', // 子应用真实地址或本地调试地址
     container: '#subapp-container',
-    activeRule: '/micro/ai-news',
+    activeRule: '/micro/ai-news-app',
     props: { actions: undefined }, // 在 setupQiankun 时注入 actions
   },
 ]
@@ -263,7 +263,7 @@ export const microApps: RegisterMicroAppsParams = [
 
 ```ts
 // src/router/routes.ts（新增路由条目）
-{ path: '/micro/ai-news', name: 'AiNewsMicro', component: () => import('@/pages/micro/Container.vue'), meta: { auth: true, perms: ['view:micro'] } }
+{ path: '/micro/ai-news-app', name: 'AiNewsMicro', component: () => import('@/pages/micro/Container.vue'), meta: { auth: true, perms: ['view:micro'] } }
 ```
 
 注意事项

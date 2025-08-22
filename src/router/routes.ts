@@ -66,7 +66,7 @@ export const dynamicRoutes: RouteRecordRaw[] = [
     } 
   },
   { 
-    path: '/micro/ai-news', 
+    path: '/micro/ai-news-app', 
     name: 'AiNewsMicro', 
     component: () => import('@/pages/micro/Container.vue'), 
     meta: { 
